@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>🚀 Quantum Wave Destroyer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Orbitron", "Arial", sans-serif;
+      background: 
+        radial-gradient(ellipse at 20% 50%, #1a0d4d 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 30%, #0d1a4d 0%, transparent 50%),
+        linear-gradient(135deg, #000011 0%, #001122 50%, #000033 100%);
+      color: #00ffff;
+      text-align: center;
+      overflow: hidden;
+      position: relative;
+      min-height: 100vh;
+    }
+    
+    /* เอฟเฟกต์ดาวพร้อมแอนิเมชัน */
+    .stars {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+    }
+    
+    .star {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle 3s infinite ease-in-out;
+      box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
+    }
+    
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.5); }
+    }
+    
+    /* เนบิวลาเคลื่อนไหว */
+    .nebula {
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(138, 43, 226, 0.3) 0%, transparent 70%);
+      animation: nebulaDrift 20s infinite linear;
+      z-index: -1;
+    }
+    
+    @keyframes nebulaDrift {
+      0% { transform: translateX(-100px) translateY(-50px) rotate(0deg); }
+      100% { transform: translateX(100px) translateY(50px) rotate(360deg); }
+    }
+    
+    canvas {
+      display: block;
+      margin: 20px auto;
+      border-radius: 20px;
+      background: 
+        radial-gradient(circle at 30% 30%, rgba(0, 100, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 70% 70%, rgba(255, 0, 150, 0.1) 0%, transparent 50%),
+        linear-gradient(45deg, #000022 0%, #001133 100%);
+      box-shadow: 
+        0 0 60px rgba(0, 255, 255, 0.4),
+        inset 0 0 40px rgba(0, 50, 100, 0.3),
+        0 10px 30px rgba(0, 0, 0, 0.5);
+      border: 3px solid;
+      border-image: linear-gradient(45deg, #00ffff, #ff00ff, #ffff00, #00ffff) 1;
+      position: relative;
+    }
+    
+    canvas::before {
+      content: '';
+      position: absolute;
+      top: -5px;
+      left: -5px;
+      right: -5px;
+      bottom: -5px;
+      background: linear-gradient(45deg, #00ffff, #ff00ff, #ffff00, #00ffff);
+      z-index: -1;
+      border-radius: 25px;
+      animation: borderGlow 3s infinite alternate;
+    }
+    
+    @keyframes borderGlow {
+      0% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+    
+    h1 {
+      margin: 20px 0;
+      text-shadow: 
+        0 0 20px rgba(0, 255, 255, 1),
+        0 0 40px rgba(0, 255, 255, 0.5),
+        0 0 60px rgba(0, 255, 255, 0.3);
+      font-size: 2.5em;
+      font-weight: bold;
+      letter-spacing: 3px;
+      background: linear-gradient(45deg, #00ffff, #ffffff, #00ffff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: titlePulse 2s infinite ease-in-out;
+    }
+    
+    @keyframes titlePulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    
+    .hud {
+      margin: 20px;
+      font-size: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+    
+    .hud-item {
+      background: linear-gradient(135deg, rgba(0, 50, 100, 0.8), rgba(0, 100, 150, 0.6));
+      padding: 12px 20px;
+      border-radius: 25px;
+      border: 2px solid rgba(0, 255, 255, 0.6);
+      box-shadow: 
+        0 0 20px rgba(0, 255, 255, 0.3),
+        inset 0 0 20px rgba(0, 150, 255, 0.2);
+      backdrop-filter: blur(10px);
+      font-weight: bold;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hud-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      animation: hudShine 3s infinite;
+    }
+    
+    @keyframes hudShine {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+    
+    .btn {
+      padding: 18px 30px;
+      margin: 15px;
+      border: none;
+      border-radius: 35px;
+      font-weight: bold;
+      cursor: pointer;
+      background: linear-gradient(145deg, #003366, #0066cc, #0099ff);
+      color: #ffffff;
+      box-shadow: 
+        0 8px 25px rgba(0, 100, 200, 0.4),
+        0 0 30px rgba(0, 200, 255, 0.3),
+        inset 0 2px 10px rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+      border: 3px solid transparent;
+      font-size: 18px;
+      font-family: "Orbitron", Arial, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      transition: left 0.5s;
+    }
+    
+    .btn:hover {
+      transform: translateY(-5px) scale(1.05);
+      box-shadow: 
+        0 15px 35px rgba(0, 150, 255, 0.6),
+        0 0 50px rgba(0, 200, 255, 0.5);
+      background: linear-gradient(145deg, #0066cc, #0099ff, #00ccff);
+      border-color: rgba(0, 255, 255, 0.8);
+    }
+    
+    .btn:hover::before {
+      left: 100%;
+    }
+    
+    .correct {
+      background: linear-gradient(145deg, #00ff88, #00cc66, #009944) !important;
+      color: #000000 !important;
+      animation: correctPulse 0.8s ease-in-out;
+      border-color: #00ff88 !important;
+      box-shadow: 0 0 40px rgba(0, 255, 136, 0.8) !important;
+    }
+    
+    .wrong {
+      background: linear-gradient(145deg, #ff3366, #cc0033, #990022) !important;
+      color: #ffffff !important;
+      animation: wrongShake 0.8s ease-in-out;
+      border-color: #ff3366 !important;
+      box-shadow: 0 0 40px rgba(255, 51, 102, 0.8) !important;
+    }
+    
+    .screen-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: 
+        linear-gradient(135deg, rgba(0, 20, 40, 0.95), rgba(20, 0, 60, 0.95));
+      padding: 50px;
+      border-radius: 30px;
+      box-shadow: 
+        0 0 80px rgba(0, 255, 255, 0.6),
+        0 0 120px rgba(255, 0, 255, 0.4),
+        inset 0 0 50px rgba(0, 100, 200, 0.2);
+      border: 3px solid;
+      border-image: linear-gradient(45deg, #00ffff, #ff00ff, #ffff00, #00ffff) 1;
+      max-width: 90%;
+      max-height: 90%;
+      overflow-y: auto;
+      z-index: 1000;
+      backdrop-filter: blur(15px);
+    }
+    
+    .formula {
+      background: linear-gradient(135deg, rgba(0, 50, 100, 0.8), rgba(50, 0, 100, 0.8));
+      padding: 20px;
+      border-radius: 15px;
+      font-family: "Courier New", monospace;
+      font-size: 22px;
+      font-weight: bold;
+      text-align: center;
+      margin: 15px 0;
+      border: 2px solid rgba(0, 255, 255, 0.6);
+      box-shadow: 
+        0 0 30px rgba(0, 255, 255, 0.3),
+        inset 0 0 20px rgba(0, 150, 255, 0.2);
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+    }
+    
+    .weapon-display {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      background: linear-gradient(135deg, rgba(0, 50, 100, 0.9), rgba(50, 0, 100, 0.9));
+      padding: 15px;
+      border-radius: 15px;
+      border: 2px solid rgba(0, 255, 255, 0.6);
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.4);
+      font-family: "Orbitron", Arial, sans-serif;
+      font-weight: bold;
+      z-index: 100;
+    }
+    
+    @keyframes correctPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+    
+    @keyframes wrongShake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+    
+    /* เอฟเฟกต์พาร์ติเคิล */
+    .particle {
+      position: absolute;
+      pointer-events: none;
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+  <!-- ดาวและเนบิวลาพื้นหลัง -->
+  <div class="stars" id="starsContainer"></div>
+  <div class="nebula" style="top: 10%; left: 70%;"></div>
+  <div class="nebula" style="top: 60%; left: 10%; animation-delay: -10s;"></div>
+  
+  <h1>🌌 QUANTUM WAVE DESTROYER ⚡</h1>
+  <canvas id="gameCanvas" width="900" height="650"></canvas>
+  
+  <div class="hud">
+    <div class="hud-item">⚡ ENERGY: <span id="score">0</span></div>
+    <div class="hud-item">💎 SHIELDS: <span id="lives">5</span></div>
+    <div class="hud-item">👽 ELIMINATED: <span id="defeated">0</span></div>
+    <div class="hud-item">🔥 COMBO: <span id="combo">0</span></div>
+  </div>
+  
+  <div class="weapon-display" id="weaponDisplay">
+    🚀 QUANTUM CANNON<br>
+    <span style="color: #ffff00;">FREQUENCY: <span id="currentFreq">10</span> Hz</span>
+  </div>
+  
+  <div id="controls"></div>
+  <div id="gameScreen"></div>
+
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    
+    const W = canvas.width;
+    const H = canvas.height;
+    
+    let gameState = {
+      score: 0,
+      lives: 5,
+      defeated: 0,
+      combo: 0,
+      currentEnemy: null,
+      answered: false,
+      gameStarted: false,
+      waves: [],
+      particles: [],
+      animTime: 0,
+      weaponFreq: 10,
+      enemies: []
+    };
+    
+    // สร้างดาวในพื้นหลัง
+    function createStars() {
+      const container = document.getElementById('starsContainer');
+      container.innerHTML = '';
+      for (let i = 0; i < 150; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        const size = Math.random() * 4 + 1;
+        star.style.width = size + 'px';
+        star.style.height = size + 'px';
+        star.style.animationDelay = Math.random() * 3 + 's';
+        star.style.animationDuration = (Math.random() * 2 + 2) + 's';
+        container.appendChild(star);
+      }
+    }
+    
+    // ข้อมูลเอเลี่ยนสุดเท่
+    const alienTypes = [
+      { 
+        color: "#ff3366", 
+        size: 35, 
+        points: 75, 
+        emoji: "👾",
+        name: "PLASMA REAPER",
+        glowColor: "#ff6699"
+      },
+      { 
+        color: "#8b00ff", 
+        size: 40, 
+        points: 100, 
+        emoji: "🛸",
+        name: "VOID STALKER",
+        glowColor: "#bb44ff"
+      },
+      { 
+        color: "#ff6600", 
+        size: 45, 
+        points: 125, 
+        emoji: "👽",
+        name: "QUANTUM BEAST",
+        glowColor: "#ff9944"
+      },
+      { 
+        color: "#00ff88", 
+        size: 38, 
+        points: 90, 
+        emoji: "⚡",
+        name: "ENERGY WRAITH",
+        glowColor: "#44ffaa"
+      }
+    ];
+    
+    function createParticleExplosion(x, y, color) {
+      for (let i = 0; i < 15; i++) {
+        gameState.particles.push({
+          x: x,
+          y: y,
+          vx: (Math.random() - 0.5) * 10,
+          vy: (Math.random() - 0.5) * 10,
+          life: 1,
+          decay: Math.random() * 0.05 + 0.02,
+          color: color,
+          size: Math.random() * 6 + 2
+        });
+      }
+    }
+    
+    function startGame() {
+      gameState = {
+        score: 0,
+        lives: 5,
+        defeated: 0,
+        combo: 0,
+        currentEnemy: null,
+        answered: false,
+        gameStarted: true,
+        waves: [],
+        particles: [],
+        animTime: 0,
+        weaponFreq: 10,
+        enemies: []
+      };
+      
+      document.getElementById("gameScreen").innerHTML = "";
+      updateHUD();
+      newEnemy();
+      gameLoop();
+    }
+    
+    function newEnemy() {
+      gameState.answered = false;
+      
+      // สุ่มค่าสำหรับโจทย์
+      const frequencies = [8, 10, 12, 15, 18, 20, 25, 30];
+      const velocities = [80, 100, 120, 150, 180, 200, 250, 300, 350];
+      
+      const f = frequencies[Math.floor(Math.random() * frequencies.length)];
+      const v = velocities[Math.floor(Math.random() * velocities.length)];
+      const lambda = Math.round((v / f) * 10) / 10;
+      
+      const type = alienTypes[Math.floor(Math.random() * alienTypes.length)];
+      
+      // อัพเดตความถี่ปืน
+      gameState.weaponFreq = f;
+      document.getElementById('currentFreq').textContent = f;
+      
+      gameState.currentEnemy = {
+        x: Math.random() * (W - 150) + 75,
+        y: 80 + Math.random() * 100,
+        v: v,
+        f: f,
+        lambda: lambda,
+        alive: true,
+        ...type,
+        pulse: 0,
+        floatOffset: Math.random() * Math.PI * 2,
+        rotation: 0,
+        tentacles: []
+      };
+      
+      // สร้างหนวดเอเลี่ยน
+      for (let i = 0; i < 6; i++) {
+        gameState.currentEnemy.tentacles.push({
+          angle: (i / 6) * Math.PI * 2,
+          length: 15 + Math.random() * 10,
+          offset: Math.random() * Math.PI * 2
+        });
+      }
+      
+      makeChoices(lambda);
+      updateHUD();
+    }
+    
+    function makeChoices(correct) {
+      const container = document.getElementById("controls");
+      container.innerHTML = `
+        <div style="margin: 25px 0;">
+          <div style="font-size: 24px; font-weight: bold; text-shadow: 0 0 20px #00ffff;">
+            🎯 TARGET ANALYSIS
+          </div>
+          <div style="margin: 15px 0; font-size: 18px;">
+            <span style="color: #ffff00;">WAVE VELOCITY:</span> ${gameState.currentEnemy.v} m/s<br>
+            <span style="color: #ff00ff;">CANNON FREQUENCY:</span> ${gameState.currentEnemy.f} Hz
+          </div>
+          <div class="formula">λ = v / f = ${gameState.currentEnemy.v} / ${gameState.currentEnemy.f}</div>
+          <div style="color: #ff6666; font-size: 16px; margin-top: 10px;">
+            ⚠️ SELECT WAVELENGTH TO DESTROY TARGET ⚠️
+          </div>
+        </div>
+      `;
+      
+      // สร้างตัวเลือกที่ท้าทายขึ้น
+      let choices = [correct];
+      while (choices.length < 4) {
+        let wrong = correct + (Math.random() - 0.5) * (correct * 0.6);
+        wrong = Math.round(wrong * 10) / 10;
+        if (wrong > 0 && !choices.some(c => Math.abs(c - wrong) < 0.05)) {
+          choices.push(wrong);
+        }
+      }
+      
+      choices.sort(() => Math.random() - 0.5);
+      
+      for (let val of choices) {
+        const btn = document.createElement("button");
+        btn.innerHTML = `<span style="color: #00ffff;">λ =</span> <span style="color: #ffffff; font-size: 20px;">${val}</span> <span style="color: #ffff00;">m</span>`;
+        btn.className = "btn";
+        btn.onclick = () => checkAnswer(val, correct, btn);
+        container.appendChild(btn);
+      }
+    }
+    
+    function checkAnswer(val, correct, btn) {
+      if (gameState.answered) return;
+      gameState.answered = true;
+      
+      const buttons = document.querySelectorAll('#controls .btn');
+      buttons.forEach(b => {
+        const btnText = b.innerHTML;
+        const btnVal = parseFloat(btnText.match(/λ =<\/span> <span[^>]*>([0-9.]+)<\/span>/)[1]);
+        if (Math.abs(btnVal - correct) < 0.01) {
+          b.classList.add("correct");
+        } else if (b === btn && Math.abs(val - correct) >= 0.01) {
+          b.classList.add("wrong");
+        }
+      });
+      
+      if (Math.abs(val - correct) < 0.01) {
+        // ถูก - เอฟเฟกต์สุดเท่
+        gameState.combo++;
+        const points = gameState.currentEnemy.points * (1 + gameState.combo * 0.1);
+        gameState.score += Math.round(points);
+        gameState.defeated++;
+        
+        createParticleExplosion(gameState.currentEnemy.x, gameState.currentEnemy.y, gameState.currentEnemy.glowColor);
+        fireQuantumWave();
+        
+        // เสียงเอฟเฟกต์ (จำลอง)
+        console.log("💥 ENEMY DESTROYED! +" + Math.round(points) + " ENERGY");
+        
+        setTimeout(() => {
+          newEnemy();
+        }, 2000);
+      } else {
+        // ผิด
+        gameState.combo = 0;
+        gameState.lives--;
+        gameState.score = Math.max(0, gameState.score - 25);
+        
+        createParticleExplosion(W/2, H-80, "#ff3366");
+        
+        if (gameState.lives <= 0) {
+          gameOver();
+          return;
+        }
+        
+        setTimeout(() => {
+          newEnemy();
+        }, 2500);
+      }
+      
+      updateHUD();
+    }
+    
+    function fireQuantumWave() {
+      if (!gameState.currentEnemy) return;
+      
+      const startX = W / 2;
+      const startY = H - 80;
+      const targetX = gameState.currentEnemy.x;
+      const targetY = gameState.currentEnemy.y;
+      
+      const dx = targetX - startX;
+      const dy = targetY - startY;
+      const angle = Math.atan2(dy, dx);
+      
+      gameState.waves.push({
+        x: startX,
+        y: startY,
+        angle: angle,
+        speed: 8,
+        phase: 0,
+        energy: 100,
+        trail: []
+      });
+    }
+    
+    function updateHUD() {
+      document.getElementById("score").textContent = gameState.score;
+      document.getElementById("lives").textContent = gameState.lives;
+      document.getElementById("defeated").textContent = gameState.defeated;
+      document.getElementById("combo").textContent = gameState.combo;
+    }
+    
+    function gameOver() {
+      gameState.gameStarted = false;
+      const gameScreen = document.getElementById("gameScreen");
+      gameScreen.innerHTML = `
+        <div class="screen-overlay">
+          <h2 style="color: #ff3366; text-shadow: 0 0 30px #ff3366;">💀 MISSION FAILED 💀</h2>
+          <div style="margin: 20px 0; font-size: 20px;">
+            <p>🔥 FINAL ENERGY: <span style="color: #ffff00;">${gameState.score}</span></p>
+            <p>👽 ALIENS DESTROYED: <span style="color: #00ff88;">${gameState.defeated}</span></p>
+            <p>⚡ BEST COMBO: <span style="color: #ff00ff;">${Math.max(...[gameState.combo, 0])}</span></p>
+          </div>
+          
+          <div style="background: linear-gradient(135deg, rgba(0, 30, 60, 0.9), rgba(30, 0, 60, 0.9)); padding: 25px; border-radius: 20px; margin: 25px 0; text-align: left; border: 2px solid rgba(0, 255, 255, 0.5);">
+            <h3 style="color: #00ffff; text-align: center;">🧬 QUANTUM WAVE PHYSICS 🧬</h3>
+            <div class="formula">λ = v / f</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+              <div>
+                <p><strong style="color: #ffff00;">λ (Lambda)</strong><br>ความยาวคลื่น (เมตร)</p>
+                <p><strong style="color: #ff00ff;">v (Velocity)</strong><br>ความเร็วคลื่น (m/s)</p>
+              </div>
+              <div>
+                <p><strong style="color: #00ff88;">f (Frequency)</strong><br>ความถี่ (Hz)</p>
+                <p style="color: #ffaa00;">ความถี่สูง → ความยาวคลื่นสั้น</p>
+              </div>
+            </div>
+          </div>
+          
+          <button class="btn" onclick="startGame()">🚀 RESTART MISSION</button>
+        </div>
+      `;
+    }
+    
+    function showStartScreen() {
+      const gameScreen = document.getElementById("gameScreen");
+      gameScreen.innerHTML = `
+        <div class="screen-overlay">
+          <h2 style="background: linear-gradient(45deg, #00ffff, #ff00ff, #ffff00); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">🌌 QUANTUM WAVE DESTROYER ⚡</h2>
+          <p style="font-size: 18px; margin: 20px 0;">🛸 Alien invasion detected! Use quantum wave physics to save humanity!</p>
+          
+          <div style="background: linear-gradient(135deg, rgba(0, 30, 60, 0.9), rgba(30, 0, 60, 0.9)); padding: 30px; border-radius: 20px; margin: 25px 0; text-align: left; border: 2px solid rgba(0, 255, 255, 0.5);">
+            <h3 style="color: #00ffff; text-align: center;">🎮 MISSION BRIEFING 🎮</h3>
+            <div class="formula">λ = v / f</div>
+            <div style="margin: 20px 0;">
+              <p>🎯 <strong>OBJECTIVE:</strong> Calculate wavelength (λ) to calibrate quantum cannon</p>
+              <p>⚡ <strong>WEAPON:</strong> Frequency-based quantum wave cannon</p>
+              <p>💎 <strong>SHIELDS:</strong> 5 shield units - wrong answers damage shields</p>
+              <p>🔥 <strong>COMBO:</strong> Consecutive hits increase energy gain</p>
+              <p>👽 <strong>ENEMIES:</strong> Various alien species with unique wave signatures</p>
+            </div>
+          </div>
+          
+          <button class="btn" onclick="startGame()">🚀 BEGIN MISSION</button>
+        </div>
+      `;
+    }
+    
+    function gameLoop() {
+      if (!gameState.gameStarted) return;
+      
+      gameState.animTime += 0.016;
+      ctx.clearRect(0, 0, W, H);
+      
+      // วาดพื้นหลังอวกาศอันตราย
+      drawSpaceBackground();
+      
+      // วาดเอเลี่ยนสุดเท่
+      if (gameState.currentEnemy && gameState.currentEnemy.alive) {
+        drawAlienMonster();
+      }
+      
+      // วาดคลื่นควอนตัม
+      for (let i = gameState.waves.length - 1; i >= 0; i--) {
+        const wave = gameState.waves[i];
+        updateQuantumWave(wave);
+        drawQuantumWave(wave);
+        
+        // ตรวจสอบการชน
+        if (gameState.currentEnemy && gameState.currentEnemy.alive) {
+          const dx = wave.x - gameState.currentEnemy.x;
+          const dy = wave.y - gameState.currentEnemy.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          if (distance < 50) {
+            gameState.currentEnemy.alive = false;
+            createParticleExplosion(gameState.currentEnemy.x, gameState.currentEnemy.y, gameState.currentEnemy.glowColor);
+            gameState.waves.splice(i, 1);
+            continue;
+          }
+        }
+        
+        // ลบคลื่นที่ออกนอกจอ
+        if (wave.x < -100 || wave.x > W + 100 || wave.y < -100 || wave.y > H + 100) {
+          gameState.waves.splice(i, 1);
+        }
+      }
+      
+      // อัพเดตพาร์ติเคิล
+      
