@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>🎮 Pixel Quantum Warriors</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+    
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Orbitron", monospace;
+      background: 
+        radial-gradient(circle at 25% 25%, #1a0d2e 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, #0d1a2e 0%, transparent 50%),
+        linear-gradient(45deg, #0a0a1a 0%, #1a1a2e 50%, #0a0a1a 100%);
+      color: #00ff41;
+      text-align: center;
+      overflow: hidden;
+      position: relative;
+      min-height: 100vh;
+      image-rendering: pixelated;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: crisp-edges;
+    }
+    
+    .stars {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+    }
+    
+    .pixel-star {
+      position: absolute;
+      background: #ffffff;
+      width: 2px;
+      height: 2px;
+      animation: pixelTwinkle 2s infinite ease-in-out;
+      box-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
+    }
+    
+    @keyframes pixelTwinkle {
+      0%, 100% { opacity: 0.3; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.5); }
+    }
+    
+    .pixel-nebula {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background: 
+        radial-gradient(circle at 30% 30%, rgba(138, 43, 226, 0.4) 0%, transparent 60%),
+        radial-gradient(circle at 70% 70%, rgba(43, 138, 226, 0.3) 0%, transparent 60%);
+      animation: nebulaDrift 15s infinite linear;
+      z-index: -1;
+      filter: contrast(1.5) brightness(1.2);
+    }
+    
+    @keyframes nebulaDrift {
+      0% { transform: translateX(-50px) translateY(-30px) rotate(0deg); }
+      100% { transform: translateX(50px) translateY(30px) rotate(360deg); }
+    }
+    
+    canvas {
+      display: block;
+      margin: 20px auto;
+      border-radius: 8px;
+      background: 
+        linear-gradient(45deg, #001122 25%, transparent 25%),
+        linear-gradient(-45deg, #001122 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #001122 75%),
+        linear-gradient(-45deg, transparent 75%, #001122 75%);
+      background-size: 4px 4px;
+      background-position: 0 0, 0 2px, 2px -2px, -2px 0px;
+      background-color: #000011;
+      box-shadow: 
+        0 0 30px rgba(0, 255, 65, 0.3),
+        inset 0 0 20px rgba(0, 30, 50, 0.5),
+        0 8px 20px rgba(0, 0, 0, 0.7);
+      border: 3px solid #00ff41;
+      image-rendering: pixelated;
+    }
+    
+    h1 {
+      margin: 20px 0;
+      text-shadow: 
+        2px 2px 0px #000000,
+        0 0 10px rgba(0, 255, 65, 1);
+      font-size: 2.2em;
+      font-weight: 900;
+      letter-spacing: 2px;
+      animation: pixelTitlePulse 1.5s infinite ease-in-out;
+      text-transform: uppercase;
+    }
+    
+    @keyframes pixelTitlePulse {
+      0%, 100% { transform: scale(1); filter: brightness(1); }
+      50% { transform: scale(1.02); filter: brightness(1.3); }
+    }
+    
+    .hud {
+      margin: 20px;
+      font-size: 18px;
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+      font-family: "Orbitron", monospace;
+    }
+    
+    .hud-item {
+      background: 
+        linear-gradient(135deg, #003366 0%, #004488 50%, #003366 100%);
+      padding: 10px 16px;
+      border: 2px solid #00ff41;
+      box-shadow: 
+        inset 2px 2px 0px rgba(0, 255, 65, 0.3),
+        inset -2px -2px 0px rgba(0, 0, 0, 0.5),
+        0 0 15px rgba(0, 255, 65, 0.2);
+      font-weight: bold;
+      text-shadow: 1px 1px 0px #000000;
+      text-transform: uppercase;
+    }
+    
+    .btn {
+      padding: 16px 24px;
+      margin: 12px;
+      border: 3px solid #00ff41;
+      background: 
+        linear-gradient(135deg, #003366 0%, #0066cc 50%, #003366 100%);
+      color: #ffffff;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 16px;
+      font-family: "Orbitron", monospace;
+      text-transform: uppercase;
+      text-shadow: 1px 1px 0px #000000;
+      box-shadow: 
+        inset 2px 2px 0px rgba(255, 255, 255, 0.2),
+        inset -2px -2px 0px rgba(0, 0, 0, 0.5),
+        0 4px 0px #002244,
+        0 0 20px rgba(0, 255, 65, 0.3);
+      transition: all 0.1s ease;
+      position: relative;
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 
+        inset 2px 2px 0px rgba(255, 255, 255, 0.3),
+        inset -2px -2px 0px rgba(0, 0, 0, 0.5),
+        0 6px 0px #002244,
+        0 0 30px rgba(0, 255, 65, 0.5);
+    }
+    
+    .btn:active {
+      transform: translateY(2px);
+      box-shadow: 
+        inset 2px 2px 0px rgba(0, 0, 0, 0.3),
+        0 2px 0px #002244,
+        0 0 15px rgba(0, 255, 65, 0.2);
+    }
+    
+    .correct {
+      background: linear-gradient(135deg, #00cc44 0%, #00ff55 50%, #00cc44 100%) !important;
+      border-color: #00ff55 !important;
+      color: #000000 !important;
+      animation: pixelCorrectPulse 0.6s ease-in-out;
+      box-shadow: 0 0 25px rgba(0, 255, 85, 0.8) !important;
+    }
+    
+    .wrong {
+      background: linear-gradient(135deg, #cc0044 0%, #ff0055 50%, #cc0044 100%) !important;
+      border-color: #ff0055 !important;
+      color: #ffffff !important;
+      animation: pixelWrongShake 0.6s ease-in-out;
+      box-shadow: 0 0 25px rgba(255, 0, 85, 0.8) !important;
+    }
+    
+    .screen-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: 
+        linear-gradient(135deg, #002244 0%, #003366 50%, #002244 100%);
+      border: 4px solid #00ff41;
+      padding: 40px;
+      box-shadow: 
+        inset 4px 4px 0px rgba(0, 255, 65, 0.2),
+        inset -4px -4px 0px rgba(0, 0, 0, 0.5),
+        0 0 50px rgba(0, 255, 65, 0.4);
+      max-width: 90%;
+      max-height: 90%;
+      overflow-y: auto;
+      z-index: 1000;
+    }
+    
+    .formula {
+      background: 
+        linear-gradient(135deg, #004488 0%, #0066cc 50%, #004488 100%);
+      border: 2px solid #00ff41;
+      padding: 15px;
+      font-family: "Orbitron", monospace;
+      font-size: 20px;
+      font-weight: bold;
+      text-align: center;
+      margin: 15px 0;
+      box-shadow: 
+        inset 2px 2px 0px rgba(0, 255, 65, 0.3),
+        inset -2px -2px 0px rgba(0, 0, 0, 0.5);
+      text-shadow: 1px 1px 0px #000000;
+    }
+    
+    .weapon-display {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      background: 
+        linear-gradient(135deg, #003366 0%, #004488 50%, #003366 100%);
+      border: 2px solid #00ff41;
+      padding: 12px;
+      font-family: "Orbitron", monospace;
+      font-weight: bold;
+      z-index: 100;
+      box-shadow: 
+        inset 2px 2px 0px rgba(0, 255, 65, 0.3),
+        inset -2px -2px 0px rgba(0, 0, 0, 0.5);
+      text-shadow: 1px 1px 0px #000000;
+    }
+    
+    @keyframes pixelCorrectPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+    
+    @keyframes pixelWrongShake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-8px); }
+      75% { transform: translateX(8px); }
+    }
+  </style>
+</head>
+<body>
+  <!-- พื้นหลัง Pixel Art -->
+  <div class="stars" id="starsContainer"></div>
+  <div class="pixel-nebula" style="top: 15%; left: 70%;"></div>
+  <div class="pixel-nebula" style="top: 60%; left: 15%; animation-delay: -8s;"></div>
+  
+  <h1>🎮 Pixel Quantum Warriors 👾</h1>
+  <canvas id="gameCanvas" width="900" height="650"></canvas>
+  
+  <div class="hud">
+    <div class="hud-item">⚡ Energy: <span id="score">0</span></div>
+    <div class="hud-item">💚 Lives: <span id="lives">5</span></div>
+    <div class="hud-item">👾 Defeated: <span id="defeated">0</span></div>
+    <div class="hud-item">🔥 Combo: <span id="combo">0</span></div>
+  </div>
+  
+  <div class="weapon-display" id="weaponDisplay">
+    🚀 Quantum Cannon<br>
+    <span style="color: #ffff00;">Frequency: <span id="currentFreq">10</span> Hz</span>
+  </div>
+  
+  <div id="controls"></div>
+  <div id="gameScreen"></div>
+
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    
+    // ตั้งค่า pixel art rendering
+    ctx.imageSmoothingEnabled = false;
+    ctx.webkitImageSmoothingEnabled = false;
+    ctx.mozImageSmoothingEnabled = false;
+    ctx.msImageSmoothingEnabled = false;
+    
+    const W = canvas.width;
+    const H = canvas.height;
+    
+    let gameState = {
+      score: 0,
+      lives: 5,
+      defeated: 0,
+      combo: 0,
+      currentEnemy: null,
+      answered: false,
+      gameStarted: false,
+      waves: [],
+      particles: [],
+      animTime: 0,
+      weaponFreq: 10
+    };
+    
+    // สร้างดาวแบบ pixel
+    function createPixelStars() {
+      const container = document.getElementById('starsContainer');
+      container.innerHTML = '';
+      for (let i = 0; i < 100; i++) {
+        const star = document.createElement('div');
+        star.className = 'pixel-star';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.animationDelay = Math.random() * 2 + 's';
+        star.style.animationDuration = (Math.random() * 1 + 1.5) + 's';
+        container.appendChild(star);
+      }
+    }
+    
+    // ข้อมูลเอเลี่ยนแบบ pixel
+    const pixelAlienTypes = [
+      { 
+        color: "#ff3366", 
+        size: 32, 
+        points: 75, 
+        emoji: "👾",
+        name: "Plasma Invader",
+        glowColor: "#ff6699",
+        pattern: "invader1"
+      },
+      { 
+        color: "#8b00ff", 
+        size: 36, 
+        points: 100, 
+        emoji: "🛸",
+        name: "Void Hunter",
+        glowColor: "#bb44ff",
+        pattern: "invader2"
+      },
+      { 
+        color: "#ff6600", 
+        size: 40, 
+        points: 125, 
+        emoji: "👽",
+        name: "Quantum Demon",
+        glowColor: "#ff9944",
+        pattern: "invader3"
+      },
+      { 
+        color: "#00ff88", 
+        size: 34, 
+        points: 90, 
+        emoji: "⚡",
+        name: "Energy Destroyer",
+        glowColor: "#44ffaa",
+        pattern: "invader4"
+      },
+      { 
+        color: "#ff0066", 
+        size: 56, 
+        points: 300, 
+        emoji: "👹",
+        name: "Star Emperor",
+        glowColor: "#ff3399",
+        isBoss: true,
+        pattern: "boss"
+      }
+    ];
+    
+    function createPixelParticleExplosion(x, y, color) {
+      for (let i = 0; i < 20; i++) {
+        gameState.particles.push({
+          x: x,
+          y: y,
+          vx: (Math.random() - 0.5) * 12,
+          vy: (Math.random() - 0.5) * 12,
+          life: 1,
+          decay: Math.random() * 0.04 + 0.02,
+          color: color,
+          size: Math.floor(Math.random() * 4) + 2,
+          pixelType: Math.random() > 0.5 ? 'square' : 'diamond'
+        });
+      }
+    }
+    
+    function drawPixelBackground() {
+      // เคลียร์พื้นหลัง
+      ctx.fillStyle = "rgba(0, 0, 17, 0.2)";
+      ctx.fillRect(0, 0, W, H);
+      
+      // วาดดาวพิกเซล
+      ctx.fillStyle = "#ffffff";
+      for (let i = 0; i < 30; i++) {
+        const x = Math.floor((i * 47) % W / 4) * 4;
+        const y = Math.floor((i * 83) % H / 4) * 4;
+        ctx.fillRect(x, y, 2, 2);
+        if (Math.random() > 0.7) {
+          ctx.fillRect(x + 2, y, 2, 2);
+          ctx.fillRect(x, y + 2, 2, 2);
+        }
+      }
+      
+      drawPixelMeteors();
+    }
+    
+    // ระบบดาวตกแบบ pixel
+    let pixelMeteors = [];
+    
+    function initPixelMeteors() {
+      pixelMeteors = [];
+      for (let i = 0; i < 4; i++) {
+        pixelMeteors.push({
+          x: Math.floor(Math.random() * W / 8) * 8,
+          y: -32,
+          speed: 2 + Math.floor(Math.random() * 3),
+          trail: [],
+          color: ['#ffffff', '#ffff88', '#88ffff', '#ff8888'][i]
+        });
+      }
+    }
+    
+    function updatePixelMeteors() {
+      for (let meteor of pixelMeteors) {
+        meteor.y += meteor.speed;
+        meteor.x += meteor.speed * 0.5;
+        
+        // เก็บหางดาวตก
+        meteor.trail.push({ x: Math.floor(meteor.x / 4) * 4, y: Math.floor(meteor.y / 4) * 4, life: 1 });
+        if (meteor.trail.length > 12) {
+          meteor.trail.shift();
+        }
+        
+        // ลดอายุหางดาวตก
+        for (let point of meteor.trail) {
+          point.life -= 0.08;
+        }
+        
+        // รีเซ็ตดาวตกเมื่อออกจากหน้าจอ
+        if (meteor.y > H + 50) {
+          meteor.x = Math.floor(Math.random() * W / 8) * 8;
+          meteor.y = -32;
+          meteor.trail = [];
+        }
+      }
+    }
+    
+    function drawPixelMeteors() {
+      updatePixelMeteors();
+      
+      for (let meteor of pixelMeteors) {
+        // วาดหางดาวตก
+        for (let point of meteor.trail) {
+          if (point.life > 0) {
+            ctx.save();
+            ctx.globalAlpha = point.life;
+            ctx.fillStyle = meteor.color;
+            const size = Math.floor(point.life * 6);
+            ctx.fillRect(point.x, point.y, size, size);
+            ctx.restore();
+          }
+        }
+        
+        // วาดตัวดาวตก
+        ctx.fillStyle = meteor.color;
+        ctx.fillRect(Math.floor(meteor.x / 4) * 4, Math.floor(meteor.y / 4) * 4, 6, 6);
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(Math.floor(meteor.x / 4) * 4 + 1, Math.floor(meteor.y / 4) * 4 + 1, 4, 4);
+      }
+    }
+    
+    function drawPixelAlien() {
+      const enemy = gameState.currentEnemy;
+      if (!enemy || !enemy.alive) return;
+      
+      enemy.pulse += 0.08;
+      const pulseScale = enemy.pulse % 2 > 1 ? 1.1 : 1;
+      const floatY = enemy.y + Math.floor(Math.sin(gameState.animTime) * 3);
+      
+      ctx.save();
+      ctx.translate(Math.floor(enemy.x / 2) * 2, Math.floor(floatY / 2) * 2);
+      
+      // วาดเงาสะท้อน
+      ctx.fillStyle = enemy.glowColor + "44";
+      ctx.fillRect(-enemy.size, enemy.size + 4, enemy.size * 2, 6);
+      
+      if (enemy.isBoss) {
+        drawPixelBoss(enemy, pulseScale);
+      } else {
+        drawPixelInvader(enemy, pulseScale);
+      }
+      
+      ctx.restore();
+      
+      // แสดงความเร็วของเอเลี่ยน
+      ctx.fillStyle = "#ffff00";
+      ctx.font = "12px Orbitron";
+      ctx.textAlign = "center";
+      ctx.fillText(`v = ${enemy.v} m/s`, enemy.x, enemy.y + enemy.size + 40);
+    }
+    
+    function drawPixelBoss(enemy, scale) {
+      const s = Math.floor(scale * 4);
+      
+      // ตัวบอส (ใหญ่และซับซ้อน)
+      ctx.fillStyle = enemy.color;
+      
+      // หัวบอส
+      ctx.fillRect(-20, -24, 40, 16);
+      ctx.fillRect(-24, -16, 48, 8);
+      ctx.fillRect(-16, -8, 32, 16);
+      
+      // ตาบอสใหญ่
+      ctx.fillStyle = "#ff0000";
+      ctx.fillRect(-8, -20, 16, 8);
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(-6, -18, 4, 4);
+      ctx.fillRect(2, -18, 4, 4);
+      
+      // แขนบอส
+      ctx.fillStyle = enemy.glowColor;
+      ctx.fillRect(-32, -8, 8, 24);
+      ctx.fillRect(24, -8, 8, 24);
+      
+      // ปีกบอส
+      ctx.fillStyle = enemy.color + "CC";
+      for (let i = 0; i < 3; i++) {
+        ctx.fillRect(-40 + i * 4, -4 + i * 2, 8, 4);
+        ctx.fillRect(32 - i * 4, -4 + i * 2, 8, 4);
+      }
+      
+      // รายละเอียดเพิ่มเติม
+      ctx.fillStyle = "#ffff00";
+      ctx.fillRect(-4, 8, 8, 4);
+      ctx.fillRect(-8, 12, 16, 4);
+      
+      // เส้นใยพลังงาน
+      ctx.strokeStyle = enemy.glowColor;
+      ctx.lineWidth = 2;
+      for (let i = 0; i < 8; i++) {
+        const angle = (i / 8) * Math.PI * 2 + gameState.animTime;
+        const x1 = Math.cos(angle) * 30;
+        const y1 = Math.sin(angle) * 30;
+        const x2 = Math.cos(angle) * 45;
+        const y2 = Math.sin(angle) * 45;
+        
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+      }
+    }
+    
+    function drawPixelInvader(enemy, scale) {
+      const s = Math.floor(scale * 2);
+      
+      ctx.fillStyle = enemy.color;
+      
+      // รูปแบบเอเลี่ยนตามชนิด
+      switch (enemy.pattern) {
+        case "invader1":
+          // ตัวอย่างเอเลี่ยนแบบคลาสสิก
+          ctx.fillRect(-12, -16, 24, 8);
+          ctx.fillRect(-16, -8, 32, 8);
+          ctx.fillRect(-8, 0, 16, 8);
+          ctx.fillRect(-20, 8, 8, 4);
+          ctx.fillRect(12, 8, 8, 4);
+          
+          // ตา
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(-8, -12, 4, 4);
+          ctx.fillRect(4, -12, 4, 4);
+          break;
+          
+        case "invader2":
+          // แบบที่ 2
+          ctx.fillRect(-8, -16, 16, 4);
+          ctx.fillRect(-12, -12, 24, 8);
+          ctx.fillRect(-16, -4, 32, 8);
+          ctx.fillRect(-4, 4, 8, 8);
+          
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(-6, -10, 2, 2);
+          ctx.fillRect(4, -10, 2, 2);
+          break;
+          
+        case "invader3":
+          // แบบที่ 3
+          ctx.fillRect(-10, -20, 20, 6);
+          ctx.fillRect(-14, -14, 28, 10);
+          ctx.fillRect(-18, -4, 36, 8);
+          ctx.fillRect(-6, 4, 12, 6);
+          
+          ctx.fillStyle = "#ffff00";
+          ctx.fillRect(-8, -12, 4, 4);
+          ctx.fillRect(4, -12, 4, 4);
+          break;
+          
+        case "invader4":
+          // แบบที่ 4
+          ctx.fillRect(-6, -18, 12, 4);
+          ctx.fillRect(-10, -14, 20, 8);
+          ctx.fillRect(-14, -6, 28, 8);
+          ctx.fillRect(-8, 2, 16, 6);
+          ctx.fillRect(-18, 8, 8, 4);
+          ctx.fillRect(10, 8, 8, 4);
+          
+          ctx.fillStyle = enemy.glowColor;
+          ctx.fillRect(-4, -12, 2, 2);
+          ctx.fillRect(2, -12, 2, 2);
+          break;
+      }
+      
+      // เงาและเอฟเฟกต์
+      ctx.fillStyle = enemy.glowColor + "88";
+      ctx.fillRect(-enemy.size/2, enemy.size/2, enemy.size, 4);
+    }
+    
+    function updateQuantumWave(wave) {
+      wave.x += Math.cos(wave.angle) * wave.speed;
+      wave.y += Math.sin(wave.angle) * wave.speed;
+      wave.phase += 0.4;
+      
+      if (!wave.trail) wave.trail = [];
+      wave.trail.push({ 
+        x: Math.floor(wave.x / 4) * 4, 
+        y: Math.floor(wave.y / 4) * 4, 
+        life: 1 
+      });
+      if (wave.trail.length > 15) {
+        wave.trail.shift();
+      }
+      
+      for (let point of wave.trail) {
+        point.life -= 0.06;
+      }
+    }
+    
+    function drawPixelQuantumWave(wave) {
+      // วาดเส้นทางคลื่น
+      if (wave.trail && wave.trail.length > 1) {
+        for (let i = 0; i < wave.trail.length - 1; i++) {
+          const point = wave.trail[i];
+          if (point.life > 0) {
+            ctx.save();
+            ctx.globalAlpha = point.life;
+            ctx.fillStyle = "#00ffff";
+            const size = Math.floor(point.life * 8);
+            ctx.fillRect(point.x, point.y, size, size);
+            ctx.restore();
+          }
+        }
+      }
+      
+      // วาดหัวคลื่นแบบพิกเซล
+      const x = Math.floor(wave.x / 4) * 4;
+      const y = Math.floor(wave.y / 4) * 4;
+      
+      // คลื่นไซน์แบบพิกเซล
+      ctx.fillStyle = "#00ffff";
+      for (let i = -6; i <= 6; i++) {
+        const waveY = y + Math.floor(Math.sin((i + wave.phase) * 0.5) * 6);
+        ctx.fillRect(x + i * 4, waveY, 4, 4);
+      }
+      
+      // จุดศูนย์กลาง
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(x - 2, y - 2, 8, 8);
+      ctx.fillStyle = "#ffff00";
+      ctx.fillRect(x, y, 4, 4);
+    }
+    
+    function updatePixelParticles() {
+      for (let i = gameState.particles.length - 1; i >= 0; i--) {
+        const particle = gameState.particles[i];
+        particle.x += particle.vx;
+        particle.y += particle.vy;
+        particle.vx *= 0.96;
+        particle.vy *= 0.96;
+        particle.life -= particle.decay;
+        
+        if (particle.life <= 0) {
+          gameState.particles.splice(i, 1);
+        } else {
+          ctx.save();
+          ctx.globalAlpha = particle.life;
+          ctx.fillStyle = particle.color;
+          const pixelSize = Math.floor(particle.size * particle.life);
+          const x = Math.floor(particle.x / 2) * 2;
+          const y = Math.floor(particle.y / 2) * 2;
+          
+          if (particle.pixelType === 'diamond') {
+            // วาดรูปเพชรพิกเซล
+            ctx.fillRect(x + pixelSize/2, y, pixelSize/2, pixelSize/2);
+            ctx.fillRect(x, y + pixelSize/2, pixelSize, pixelSize/2);
+            ctx.fillRect(x + pixelSize/2, y + pixelSize, pixelSize/2, pixelSize/2);
+          } else {
+            // วาดสี่เหลี่ยมพิกเซล
+            ctx.fillRect(x, y, pixelSize, pixelSize);
+          }
+          ctx.restore();
+        }
+      }
+    }
+    
+    function startGame() {
+      gameState = {
+        score: 0,
+        lives: 5,
+        defeated: 0,
+        combo: 0,
+        currentEnemy: null,
+        answered: false,
+        gameStarted: true,
+        waves: [],
+        particles: [],
+        animTime: 0,
+        weaponFreq: 10
+      };
+      
+      document.getElementById("gameScreen").innerHTML = "";
+      updateHUD();
+      newEnemy();
+      gameLoop();
+    }
+    
+    function newEnemy() {
+      gameState.answered = false;
+      
+      // ตัวเลขง่ายๆ ที่หารลงตัว
+      const easyFrequencies = [2, 4, 5, 8, 10, 20, 25];
+      const easyVelocities = [40, 50, 60, 80, 100, 120, 160, 200];
+      
+      // ตรวจสอบว่าเป็นบอสไหม (ทุก 5 ตัว)
+      const isBossRound = (gameState.defeated + 1) % 5 === 0;
+      
+      let f, v, lambda, type;
+      
+      if (isBossRound) {
+        // บอสใช้เลขที่ยากกว่า
+        const bossFrequencies = [6, 12, 15, 18, 24];
+        const bossVelocities = [90, 108, 144, 180, 216, 270];
+        
+        f = bossFrequencies[Math.floor(Math.random() * bossFrequencies.length)];
+        v = bossVelocities[Math.floor(Math.random() * bossVelocities.length)];
+        lambda = v / f;
+        type = pixelAlienTypes[4]; // บอส
+      } else {
+        // เอเลี่ยนธรรมดาใช้เลขง่าย
+        f = easyFrequencies[Math.floor(Math.random() * easyFrequencies.length)];
+        v = easyVelocities[Math.floor(Math.random() * easyVelocities.length)];
+        lambda = v / f;
+        type = pixelAlienTypes[Math.floor(Math.random() * 4)]; // เอเลี่ยนธรรมดา
+      }
+      
+      // อัพเดตความถี่ปืน
+      gameState.weaponFreq = f;
+      document.getElementById('currentFreq').textContent = f;
+      
+      gameState.currentEnemy = {
+        x: Math.random() * (W - 150) + 75,
+        y: 80 + Math.random() * 100,
+        v: v,
+        f: f,
+        lambda: lambda,
+        alive: true,
+        ...type,
+        pulse: 0,
+        floatOffset: Math.random() * Math.PI * 2,
+        rotation: 0
+      };
+      
+      makeChoices(lambda);
+      updateHUD();
+    }
+    
+    function makeChoices(correct) {
+      const container = document.getElementById("controls");
+      const isBoss = gameState.currentEnemy.isBoss;
+      
+      container.innerHTML = `
+        <div style="margin: 25px 0;">
+          <div style="font-size: 24px; font-weight: bold; text-shadow: 2px 2px 0px #000000, 0 0 10px #00ff41;">
+            🎯 Target Locked ${isBoss ? '👑 BOSS!' : ''}
+          </div>
+          <div style="margin: 15px 0; font-size: 18px;">
+            <span style="color: #ffff00;">Alien Velocity:</span> ${gameState.currentEnemy.v} m/s
+          </div>
+          <div class="formula">λ = v / f</div>
+          <div style="color: #ff6666; font-size: 16px; margin-top: 10px;">
+            ⚠️ Calculate wavelength to destroy the target! ⚠️
+          </div>
+        </div>
+      `;
+      
+      // สร้างตัวเลือก
+      let choices = [correct];
+      
+      if (isBoss) {
+        // บอสมีตัวเลือกที่ยากกว่า
+        while (choices.length < 4) {
+          let wrong = correct + (Math.random() - 0.5) * (correct * 0.3);
+          wrong = Math.round(wrong * 10) / 10;
+          if (wrong > 0 && !choices.some(c => Math.abs(c - wrong) < 0.01)) {
+            choices.push(wrong);
+          }
+        }
+      } else {
+        // เอเลี่ยนธรรมดามีตัวเลือกง่ายๆ
+        while (choices.length < 4) {
+          let wrong = correct + (Math.floor(Math.random() * 7) - 3); // ±1,2,3
+          if (wrong > 0 && !choices.some(c => Math.abs(c - wrong) < 0.01)) {
+            choices.push(wrong);
+          }
+        }
+      }
+      
+      choices.sort(() => Math.random() - 0.5);
+      
+      for (let val of choices) {
+        const btn = document.createElement("button");
+        btn.innerHTML = `<span style="color: #00ff41;">λ =</span> <span style="color: #ffffff; font-size: 20px;">${val}</span> <span style="color: #ffff00;">m</span>`;
+        btn.className = "btn";
+        btn.onclick = () => checkAnswer(val, correct, btn);
+        container.appendChild(btn);
+      }
+    }
+    
+    function checkAnswer(val, correct, btn) {
+      if (gameState.answered) return;
+      gameState.answered = true;
+      
+      const buttons = document.querySelectorAll('#controls .btn');
+      buttons.forEach(b => {
+        const btnText = b.innerHTML;
+        const match = btnText.match(/λ =<\/span> <span[^>]*>([0-9.]+)<\/span>/);
+        if (match) {
+          const btnVal = parseFloat(match[1]);
+          if (Math.abs(btnVal - correct) < 0.01) {
+            b.classList.add("correct");
+          } else if (b === btn && Math.abs(val - correct) >= 0.01) {
+            b.classList.add("wrong");
+          }
+        }
+      });
+      
+      if (Math.abs(val - correct) < 0.01) {
+        // ถูก
+        gameState.combo++;
+        const points = gameState.currentEnemy.points * (1 + gameState.combo * 0.1);
+        gameState.score += Math.round(points);
+        gameState.defeated++;
+        
+        createPixelParticleExplosion(gameState.currentEnemy.x, gameState.currentEnemy.y, gameState.currentEnemy.glowColor);
+        fireQuantumWave();
+        
+        setTimeout(() => {
+          newEnemy();
+        }, 2000);
+      } else {
+        // ผิด
+        gameState.combo = 0;
+        gameState.lives--;
+        gameState.score = Math.max(0, gameState.score - 25);
+        
+        createPixelParticleExplosion(W/2, H-80, "#ff3366");
+        
+        if (gameState.lives <= 0) {
+          gameOver();
+          return;
+        }
+        
+        setTimeout(() => {
+          newEnemy();
+        }, 2500);
+      }
+      
+      updateHUD();
+    }
+    
+    function fireQuantumWave() {
+      if (!gameState.currentEnemy) return;
+      
+      const startX = W / 2;
+      const startY = H - 80;
+      const targetX = gameState.currentEnemy.x;
+      const targetY = gameState.currentEnemy.y;
+      
+      const dx = targetX - startX;
+      const dy = targetY - startY;
+      const angle = Math.atan2(dy, dx);
+      
+      gameState.waves.push({
+        x: startX,
+        y: startY,
+        angle: angle,
+        speed: 8,
+        phase: 0,
+        energy: 100,
+        trail: []
+      });
+    }
+    
+    function updateHUD() {
+      document.getElementById("score").textContent = gameState.score;
+      document.getElementById("lives").textContent = gameState.lives;
+      document.getElementById("defeated").textContent = gameState.defeated;
+      document.getElementById("combo").textContent = gameState.combo;
+    }
+    
+    function gameOver() {
+      gameState.gameStarted = false;
+      const gameScreen = document.getElementById("gameScreen");
+      gameScreen.innerHTML = `
+        <div class="screen-overlay">
+          <h2 style="color: #ff3366; text-shadow: 2px 2px 0px #000000, 0 0 20px #ff3366;">💀 GAME OVER 💀</h2>
+          <div style="margin: 20px 0; font-size: 20px;">
+            <p>🔥 Final Score: <span style="color: #ffff00;">${gameState.score}</span></p>
+            <p>👾 Aliens Defeated: <span style="color: #00ff88;">${gameState.defeated}</span></p>
+            <p>⚡ Max Combo: <span style="color: #ff00ff;">${gameState.combo}</span></p>
+          </div>
+          
+          <div style="background: linear-gradient(135deg, #002244 0%, #003366 50%, #002244 100%); border: 2px solid #00ff41; padding: 25px; margin: 25px 0; text-align: left;">
+            <h3 style="color: #00ff41; text-align: center;">🧬 Quantum Wave Physics 🧬</h3>
+            <div class="formula">λ = v / f</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+              <div>
+                <p><strong style="color: #ffff00;">λ (Lambda)</strong><br>Wavelength (meters)</p>
+                <p><strong style="color: #ff00ff;">v (Velocity)</strong><br>Wave speed (m/s)</p>
+              </div>
+              <div>
+                <p><strong style="color: #00ff88;">f (Frequency)</strong><br>Frequency (Hz)</p>
+                <p style="color: #ffaa00;">Higher frequency → Shorter wavelength</p>
+              </div>
+            </div>
+          </div>
+          
+          <button class="btn" onclick="startGame()">🚀 RESTART MISSION</button>
+        </div>
+      `;
+    }
+    
+    function gameLoop() {
+      if (!gameState.gameStarted) return;
+      
+      gameState.animTime += 0.016;
+      ctx.clearRect(0, 0, W, H);
+      
+      // วาดพื้นหลังอวกาศ pixel
+      drawPixelBackground();
+      
+      // วาดเอเลี่ยน
+      if (gameState.currentEnemy && gameState.currentEnemy.alive) {
+        drawPixelAlien();
+      }
+      
+      // วาดคลื่นควอนตัม
+      for (let i = gameState.waves.length - 1; i >= 0; i--) {
+        const wave = gameState.waves[i];
+        updateQuantumWave(wave);
+        drawPixelQuantumWave(wave);
+        
+        // ตรวจสอบการชน
+        if (gameState.currentEnemy && gameState.currentEnemy.alive) {
+          const dx = wave.x - gameState.currentEnemy.x;
+          const dy = wave.y - gameState.currentEnemy.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          if (distance < 50) {
+            gameState.currentEnemy.alive = false;
+            createPixelParticleExplosion(gameState.currentEnemy.x, gameState.currentEnemy.y, gameState.currentEnemy.glowColor);
+            gameState.waves.splice(i, 1);
+            continue;
+          }
+        }
+        
+        // ลบคลื่นที่ออกนอกจอ
+        if (wave.x < -100 || wave.x > W + 100 || wave.y < -100 || wave.y > H + 100) {
+          gameState.waves.splice(i, 1);
+        }
+      }
+      
+      // อัพเดตพาร์ติเคิล
+      updatePixelParticles();
+      
+      // วาดยานของผู้เล่น
+      drawPixelPlayerShip();
+      
+      requestAnimationFrame(gameLoop);
+    }
+    
+    function drawPixelPlayerShip() {
+      const x = Math.floor(W / 2 / 4) * 4;
+      const y = Math.floor((H - 80) / 4) * 4;
+      
+      ctx.save();
+      ctx.translate(x, y);
+      
+      // วาดยานแม่ (แบบพิกเซล)
+      ctx.fillStyle = "#0099ff";
+      // ตัวยาน
+      ctx.fillRect(-16, -24, 32, 40);
+      ctx.fillRect(-12, -32, 24, 8);
+      ctx.fillRect(-8, -40, 16, 8);
+      
+      // ปีกยาน
+      ctx.fillRect(-28, -8, 12, 20);
+      ctx.fillRect(16, -8, 12, 20);
+      
+      // เครื่องยนต์
+      ctx.fillStyle = "#ff6600";
+      ctx.fillRect(-24, 12, 8, 8);
+      ctx.fillRect(16, 12, 8, 8);
+      ctx.fillRect(-8, 16, 16, 4);
+      
+      // หัวปืน
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(-4, -44, 8, 4);
+      
+      // รายละเอียดยาน
+      ctx.fillStyle = "#00ff41";
+      ctx.fillRect(-4, -20, 8, 4);
+      ctx.fillRect(-8, -12, 16, 4);
+      
+      ctx.restore();
+      
+      // แสดงความถี่ของยาน
+      ctx.fillStyle = "#00ff41";
+      ctx.font = "12px Orbitron";
+      ctx.textAlign = "center";
+      ctx.fillText(`f = ${gameState.weaponFreq} Hz`, x, y + 60);
+    }
+    
+    // เริ่มเกมอัตโนมัติ
+    window.addEventListener('load', function() {
+      createPixelStars();
+      initPixelMeteors();
+      startGame(); // เริ่มเกมทันที
+    });
+  </script>
+</body>
+</html>
