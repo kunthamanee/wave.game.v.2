@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>🎮 Pixel Quantum Warriors</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Orbitron", monospace;
+      background: radial-gradient(circle at 25% 25%, #1a0d2e 0%, transparent 50%),
+                  radial-gradient(circle at 75% 75%, #0d1a2e 0%, transparent 50%),
+                  linear-gradient(45deg, #0a0a1a 0%, #1a1a2e 50%, #0a0a1a 100%);
+      color: #00ff41;
+      text-align: center;
+      overflow: hidden;
+      min-height: 100vh;
+      image-rendering: pixelated;
+    }
+    canvas { display: block; margin: 20px auto; border: 3px solid #00ff41; background:#000011; }
+    h1 { margin: 20px 0; text-shadow:2px 2px 0px #000; font-size:2.2em; }
+    .hud { margin:20px; display:flex; justify-content:center; gap:30px; flex-wrap:wrap; }
+    .hud-item { padding:10px 16px; border:2px solid #00ff41; background:#003366; }
+    .btn { padding:16px 24px; margin:12px; border:3px solid #00ff41; background:#004488; color:#fff; cursor:pointer; font-weight:bold; }
+    .correct { background:#00ff55 !important; color:#000 !important; }
+    .wrong { background:#ff0055 !important; }
+    .formula { background:#004488; border:2px solid #00ff41; padding:10px; margin:10px; }
+  </style>
+</head>
+<body>
+  <h1>🎮 Pixel Quantum Warriors 👾</h1>
+  <canvas id="gameCanvas" width="900" height="650"></canvas>
+
+  <div class="hud">
+    <div class="hud-item">⚡ Energy: <span id="score">0</span></div>
+    <div class="hud-item">💚 Lives: <span id="lives">5</span></div>
+    <div class="hud-item">👾 Defeated: <span id="defeated">0</span></div>
+    <div class="hud-item">🔥 Combo: <span id="combo">0</span></div>
+  </div>
+
+  <div id="controls"></div>
+  <div id="gameScreen"></div>
+
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    const W = canvas.width, H = canvas.height;
+
+    let gameState = { score:0, lives:5, defeated:0, combo:0, currentEnemy:null, answered:false, gameStarted:false };
+
+    // โจทย์ทฤษฎี
+    const theoryQuestions = [
+      { q:"คลื่นกลต้องอาศัยอะไรในการเคลื่อนที่?", choices:["ไม่ต้องอาศัยตัวกลาง","อากาศ น้ำ เชือก ฯลฯ","สูญญากาศ","สนามแม่เหล็ก"], answer:1 },
+      { q:"หน่วยของความถี่คลื่นคืออะไร?", choices:["m/s","Hz","N","J"], answer:1 },
+      { q:"ความสัมพันธ์ระหว่าง v, f และ λ คืออะไร?", choices:["v = f / λ","v = f × λ","v = λ / f","v = 1 / (f × λ)"], answer:1 },
+      { q:"เสียงเดินทางได้เร็วที่สุดในตัวกลางใด?", choices:["อากาศ","น้ำ","เหล็ก","สูญญากาศ"], answer:2 },
+      { q:"แอมพลิจูดของคลื่นสัมพันธ์กับอะไร?", choices:["ความถี่","พลังงาน","ความเร็ว","ความยาวคลื่น"], answer:1 }
+    ];
+
+    function startGame(){
+      gameState={score:0,lives:5,defeated:0,combo:0,currentEnemy:null,answered:false,gameStarted:true};
+      newEnemy();
+      updateHUD();
+    }
+
+    function newEnemy(){
+      gameState.answered=false;
+      const isTheory = Math.random()<0.5;
+      if(isTheory){ makeTheoryChoices(); }
+      else {
+        let v=100, f=10, lambda=v/f;
+        makeChoices(lambda,v,f);
+      }
+    }
+
+    function makeChoices(correct,v,f){
+      const container=document.getElementById("controls");
+      container.innerHTML=`<div style="font-size:20px;">Alien Velocity: ${v} m/s<br><div class="formula">λ = v / f</div></div>`;
+      let choices=[correct];
+      while(choices.length<4){
+        let wrong=correct+(Math.floor(Math.random()*5)-2);
+        if(wrong>0 && !choices.includes(wrong)) choices.push(wrong);
+      }
+      choices.sort(()=>Math.random()-0.5);
+      choices.forEach(val=>{
+        const btn=document.createElement("button");
+        btn.className="btn";
+        btn.innerHTML=`λ = ${val} m`;
+        btn.onclick=()=>checkAnswer(val,correct,btn,false);
+        container.appendChild(btn);
+      });
+    }
+
+    function makeTheoryChoices(){
+      const container=document.getElementById("controls");
+      container.innerHTML="";
+      const q=theoryQuestions[Math.floor(Math.random()*theoryQuestions.length)];
+      container.innerHTML=`<div style="font-size:20px; margin:10px;">📘 ${q.q}</div>`;
+      q.choices.forEach((choice,i)=>{
+        const btn=document.createElement("button");
+        btn.className="btn";
+        btn.innerHTML=choice;
+        btn.onclick=()=>checkAnswer(i,q.answer,btn,true);
+        container.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(val,correct,btn,isTheory){
+      if(gameState.answered) return;
+      gameState.answered=true;
+      const buttons=document.querySelectorAll('#controls .btn');
+      buttons.forEach((b,idx)=>{
+        if((isTheory && idx===correct) || (!isTheory && parseFloat(b.textContent.match(/[0-9.]+/))===correct)){
+          b.classList.add("correct");
+        } else if(b===btn){
+          b.classList.add("wrong");
+        }
+      });
+      if((isTheory && val===correct)||(!isTheory && val===correct)){
+        gameState.score+=100; gameState.defeated++; gameState.combo++;
+        setTimeout(()=>newEnemy(),1500);
+      } else {
+        gameState.lives--; gameState.combo=0;
+        if(gameState.lives<=0){ gameOver(); return; }
+        setTimeout(()=>newEnemy(),1500);
+      }
+      updateHUD();
+    }
+
+    function updateHUD(){
+      document.getElementById("score").textContent=gameState.score;
+      document.getElementById("lives").textContent=gameState.lives;
+      document.getElementById("defeated").textContent=gameState.defeated;
+      document.getElementById("combo").textContent=gameState.combo;
+    }
+
+    function gameOver(){
+      document.getElementById("gameScreen").innerHTML=`<div style="background:#222; padding:20px; color:#fff;">💀 GAME OVER 💀<br>Score: ${gameState.score}<br><button class="btn" onclick="startGame()">RESTART</button></div>`;
+    }
+
+    window.onload=startGame;
+  </script>
+</body>
+</html>
